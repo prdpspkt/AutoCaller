@@ -1,0 +1,7 @@
+<resources>
+    <!-- Framework Material theme (no AppCompat dependency). -->
+    <style name="Theme.AICallResponder" parent="@android:style/Theme.Material.Light.NoActionBar">
+        <item name="android:colorPrimary">@color/purple_500</item>
+        <item name="android:colorPrimaryDark">@color/purple_700</item>
+    </style>
+</resources>

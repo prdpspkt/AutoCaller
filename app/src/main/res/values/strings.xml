@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">AI Call Responder</string>
+    <string name="disclaimer">This app answers calls automatically and speaks to callers with an AI. Only use it where you are legally allowed to auto-answer and record/process calls, and inform callers as required by law in your jurisdiction. Audio is routed through the loudspeaker, so expect echo and turn-taking delays.</string>
+</resources>

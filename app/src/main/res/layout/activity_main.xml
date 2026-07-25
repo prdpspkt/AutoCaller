@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:paddingBottom="4dp" />
+
+        <TextView
+            android:id="@+id/textPermStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Permissions: unknown"
+            android:paddingBottom="4dp" />
+
+        <TextView
+            android:id="@+id/textOwnerStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Device Owner: unknown"
+            android:paddingBottom="12dp" />
+
+        <Button
+            android:id="@+id/btnPermissions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Grant permissions" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Claude API key"
+            android:paddingTop="16dp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/editApiKey"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="sk-ant-..."
+            android:inputType="textPassword"
+            android:autofillHints="password" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Model"
+            android:paddingTop="12dp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/editModel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:autofillHints="" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Language (BCP-47 tag, e.g. ne-NP, en-US, hi-IN)"
+            android:paddingTop="12dp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/editLanguage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="ne-NP"
+            android:inputType="text"
+            android:autofillHints="" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Speech-to-text engine (whisper = on-device, google = online)"
+            android:paddingTop="12dp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/editSttEngine"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="whisper"
+            android:inputType="text"
+            android:autofillHints="" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Whisper model path (.bin, required for on-device Whisper)"
+            android:paddingTop="12dp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/editWhisperModel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="/storage/emulated/0/Download/ggml-whisper-nepali.bin"
+            android:inputType="text"
+            android:autofillHints="" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Greeting (spoken via TTS)"
+            android:paddingTop="12dp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/editGreeting"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine"
+            android:minLines="2"
+            android:autofillHints="" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pre-recorded greeting file path (optional — overrides TTS greeting)"
+            android:paddingTop="12dp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/editGreetingAudio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="/storage/emulated/0/Download/greeting.mp3"
+            android:inputType="text"
+            android:autofillHints="" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Assistant persona (system prompt)"
+            android:paddingTop="12dp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/editSystem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine"
+            android:minLines="3"
+            android:autofillHints="" />
+
+        <Button
+            android:id="@+id/btnSave"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Save settings" />
+
+        <Switch
+            android:id="@+id/switchEnabled"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Auto-answer incoming calls" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="16dp"
+            android:textSize="12sp"
+            android:text="@string/disclaimer" />
+
+    </LinearLayout>
+</ScrollView>
