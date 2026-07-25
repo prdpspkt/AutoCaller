@@ -9,19 +9,25 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 /**
- * Minimal client for the Anthropic Messages API using java.net (no extra dependencies).
- * Docs: https://docs.claude.com/en/api/messages
+ * Minimal client for the DeepSeek chat-completions API (OpenAI-compatible) using java.net.
+ * Docs: https://api-docs.deepseek.com/  •  base URL https://api.deepseek.com
  */
-class ClaudeClient(
+class DeepSeekClient(
     private val apiKey: String,
     private val model: String
 ) {
     data class Turn(val role: String, val text: String) // role = "user" | "assistant"
 
-    /** Sends the running transcript and returns Claude's text reply. Runs off the main thread. */
+    /** Sends the running transcript and returns the assistant's reply. Runs off the main thread. */
     suspend fun reply(systemPrompt: String, history: List<Turn>): String =
         withContext(Dispatchers.IO) {
             val messages = JSONArray()
+            if (systemPrompt.isNotBlank()) {
+                messages.put(JSONObject().apply {
+                    put("role", "system")
+                    put("content", systemPrompt)
+                })
+            }
             history.forEach { turn ->
                 messages.put(JSONObject().apply {
                     put("role", turn.role)
@@ -31,9 +37,9 @@ class ClaudeClient(
 
             val payload = JSONObject().apply {
                 put("model", model)
-                put("max_tokens", 300)
-                if (systemPrompt.isNotBlank()) put("system", systemPrompt)
                 put("messages", messages)
+                put("max_tokens", 300)
+                put("stream", false)
             }
 
             val conn = (URL(ENDPOINT).openConnection() as HttpURLConnection).apply {
@@ -41,9 +47,9 @@ class ClaudeClient(
                 connectTimeout = 15_000
                 readTimeout = 30_000
                 doOutput = true
-                setRequestProperty("x-api-key", apiKey)
-                setRequestProperty("anthropic-version", "2023-06-01")
-                setRequestProperty("content-type", "application/json")
+                setRequestProperty("Authorization", "Bearer $apiKey")
+                setRequestProperty("Content-Type", "application/json")
+                setRequestProperty("Accept", "application/json")
             }
 
             try {
@@ -52,7 +58,7 @@ class ClaudeClient(
                 val stream = if (code in 200..299) conn.inputStream else conn.errorStream
                 val body = stream?.bufferedReader(Charsets.UTF_8)?.use { it.readText() }.orEmpty()
                 if (code !in 200..299) {
-                    throw IOException("Claude API error $code: $body")
+                    throw IOException("DeepSeek API error $code: $body")
                 }
                 parseText(body)
             } finally {
@@ -61,16 +67,13 @@ class ClaudeClient(
         }
 
     private fun parseText(body: String): String {
-        val content = JSONObject(body).optJSONArray("content") ?: return ""
-        val sb = StringBuilder()
-        for (i in 0 until content.length()) {
-            val block = content.optJSONObject(i) ?: continue
-            if (block.optString("type") == "text") sb.append(block.optString("text"))
-        }
-        return sb.toString().trim()
+        val choices = JSONObject(body).optJSONArray("choices") ?: return ""
+        val first = choices.optJSONObject(0) ?: return ""
+        val message = first.optJSONObject("message") ?: return ""
+        return message.optString("content").trim()
     }
 
     companion object {
-        private const val ENDPOINT = "https://api.anthropic.com/v1/messages"
+        private const val ENDPOINT = "https://api.deepseek.com/chat/completions"
     }
 }

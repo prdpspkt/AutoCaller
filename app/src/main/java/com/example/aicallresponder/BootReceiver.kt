@@ -6,8 +6,11 @@ import android.content.Intent
 import android.util.Log
 
 /**
- * On boot, if the app is Device Owner and auto-answer is enabled, silently (re)grant the runtime
- * permissions so the app is immediately armed without any user interaction after a reboot.
+ * On boot, if auto-answer is enabled, (re)start the persistent monitor service so calls are handled
+ * without the user having to open the app. If the app is Device Owner it also silently re-grants the
+ * runtime permissions first. Starting the mic foreground service from boot works for Device Owner
+ * (exempt from background-start limits); on a normal install Android may block it until the app is
+ * opened once.
  */
 class BootReceiver : BroadcastReceiver() {
 
@@ -20,6 +23,13 @@ class BootReceiver : BroadcastReceiver() {
         if (owner.isDeviceOwner()) {
             val ok = owner.grantRuntimePermissions(DeviceOwnerManager.requiredRuntimePermissions())
             Log.d(TAG, "Boot: re-granted permissions (allOk=$ok)")
+        }
+
+        try {
+            CallHandlerService.start(context)
+            Log.d(TAG, "Boot: started call monitor")
+        } catch (e: Exception) {
+            Log.w(TAG, "Boot: could not start monitor (needs app opened once on non-owner devices)", e)
         }
     }
 

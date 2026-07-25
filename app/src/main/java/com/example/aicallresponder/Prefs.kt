@@ -5,9 +5,9 @@ import android.content.Context
 /**
  * Thin wrapper over SharedPreferences for the app's settings.
  *
- * NOTE: the Claude API key is stored on-device in plain SharedPreferences. That is fine for a
+ * NOTE: the DeepSeek API key is stored on-device in plain SharedPreferences. That is fine for a
  * personal build, but a key shipped inside an APK can be extracted. For anything public, put the
- * key behind your own backend proxy instead of calling Anthropic directly from the phone.
+ * key behind your own backend proxy instead of calling DeepSeek directly from the phone.
  */
 class Prefs(context: Context) {
 
@@ -64,8 +64,8 @@ class Prefs(context: Context) {
         private const val KEY_STT_ENGINE = "stt_engine"
         private const val KEY_WHISPER_MODEL = "whisper_model_path"
 
-        // Haiku is the low-latency choice, which matters a lot inside a live call.
-        const val DEFAULT_MODEL = "claude-haiku-4-5-20251001"
+        // deepseek-v4-flash (non-thinking) is the low-latency choice, which matters inside a call.
+        const val DEFAULT_MODEL = "deepseek-v4-flash"
 
         // Default to Nepali. Change in the app for other languages (BCP-47 tags).
         const val DEFAULT_LANGUAGE = "ne-NP"

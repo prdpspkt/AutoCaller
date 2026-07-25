@@ -9,7 +9,7 @@ import kotlinx.coroutines.launch
 
 /**
  * Orchestrates one call's conversation:
- *   greeting -> listen -> Claude -> speak -> listen -> ... -> hang up / go idle.
+ *   greeting -> listen -> DeepSeek -> speak -> listen -> ... -> hang up / go idle.
  *
  * Half-duplex by nature: we never listen while TTS is speaking, otherwise the recognizer just
  * hears our own voice off the loudspeaker.
@@ -17,14 +17,14 @@ import kotlinx.coroutines.launch
 class ConversationManager(
     private val tts: SpeechEngine,
     private val stt: SttEngine,
-    private val claude: ClaudeClient,
+    private val llm: DeepSeekClient,
     private val systemPrompt: String,
     private val greeting: String,
     private val greetingAudioPath: String,
     private val onEnded: () -> Unit
 ) {
     private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
-    private val history = mutableListOf<ClaudeClient.Turn>()
+    private val history = mutableListOf<DeepSeekClient.Turn>()
     private var active = false
     private var consecutiveSilence = 0
 
@@ -64,16 +64,16 @@ class ConversationManager(
     }
 
     private fun respondTo(userText: String) {
-        history.add(ClaudeClient.Turn("user", userText))
+        history.add(DeepSeekClient.Turn("user", userText))
         scope.launch {
             val reply = try {
-                claude.reply(systemPrompt, history)
+                llm.reply(systemPrompt, history)
             } catch (e: Exception) {
-                Log.e(TAG, "Claude call failed", e)
+                Log.e(TAG, "DeepSeek call failed", e)
                 "माफ गर्नुहोस्, मैले बुझिनँ। कृपया फेरि भन्नुहोस्।"
             }
             if (!active) return@launch
-            history.add(ClaudeClient.Turn("assistant", reply))
+            history.add(DeepSeekClient.Turn("assistant", reply))
             tts.speak(reply, "reply-${history.size}") { if (active) listen() }
         }
     }

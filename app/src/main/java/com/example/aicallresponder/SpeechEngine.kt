@@ -1,6 +1,7 @@
 package com.example.aicallresponder
 
 import android.content.Context
+import android.media.AudioAttributes
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.os.Bundle
@@ -40,6 +41,14 @@ class SpeechEngine(
                     Log.w(TAG, "TTS locale $ttsLocale unavailable ($res); falling back to default.")
                     tts?.setLanguage(Locale.getDefault())
                 }
+                // Route speech to the call/communication path so, with speakerphone on, it plays out
+                // the loudspeaker and the caller hears it.
+                tts?.setAudioAttributes(
+                    AudioAttributes.Builder()
+                        .setUsage(AudioAttributes.USAGE_VOICE_COMMUNICATION)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
+                        .build()
+                )
             } else {
                 Log.e(TAG, "TTS init failed: $status")
             }
@@ -60,10 +69,8 @@ class SpeechEngine(
             @Deprecated("Deprecated in Java")
             override fun onError(id: String?) { main.post(onDone) }
         })
-        val params = Bundle().apply {
-            putInt(TextToSpeech.Engine.KEY_PARAM_STREAM, AudioManager.STREAM_VOICE_CALL)
-        }
-        engine.speak(text, TextToSpeech.QUEUE_FLUSH, params, utteranceId)
+        // Routing is set via AudioAttributes in initTts; no per-utterance stream override needed.
+        engine.speak(text, TextToSpeech.QUEUE_FLUSH, Bundle(), utteranceId)
     }
 
     /** Play a pre-recorded greeting file. Falls back to [onDone] immediately if it can't play. */
